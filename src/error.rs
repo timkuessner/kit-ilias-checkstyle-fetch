@@ -10,6 +10,15 @@ pub enum AppError {
 
     #[error("URL error: {0}")]
     Url(#[from] url::ParseError),
+
+    #[error("Authentication failed: {0}")]
+    Auth(String),
+
+    #[error("ILIAS error: {0}")]
+    Ilias(String),
+
+    #[error("File operation failed: {0}")]
+    Io(#[from] std::io::Error),
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;

@@ -1,11 +1,10 @@
+mod auth;
 mod config;
 mod error;
+mod html;
 mod http;
 
-use url::Url;
-
-use crate::error::Result;
-use crate::http::HttpClient;
+use crate::{config::Config, error::Result};
 
 #[tokio::main]
 async fn main() {
@@ -16,13 +15,11 @@ async fn main() {
 }
 
 async fn run() -> Result<()> {
-    let client = HttpClient::new()?;
+    let config = Config::from_env()?;
 
-    let url = Url::parse("https://ilias.studium.kit.edu")?;
+    let _ = auth::authenticate(&config).await?;
 
-    let (final_url, _) = client.get_html(&url).await?;
-
-    println!("Final URL: {final_url}");
+    println!("Authentication successful");
 
     Ok(())
 }
