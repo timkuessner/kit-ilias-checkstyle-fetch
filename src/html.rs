@@ -1,9 +1,9 @@
+use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
+use url::Url;
 
-use crate::{
-    error::{AppError, Result},
-    http::FormData,
-};
+use crate::error::{AppError, Result};
+use crate::form::FormData;
 
 pub struct PostForm {
     pub action: String,
@@ -165,4 +165,59 @@ pub fn find_attribute_release_form(document: &Html) -> Result<Option<PostForm>> 
     }
 
     Ok(None)
+}
+
+fn anchor_text(element: ElementRef) -> String {
+    element
+        .text()
+        .collect::<String>()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+pub fn anchors(document: &Html) -> Result<Vec<(String, String)>> {
+    let sel = selector("a[href]")?;
+    Ok(document
+        .select(&sel)
+        .filter_map(|a| {
+            let href = a.value().attr("href")?;
+            if href.is_empty() || href.starts_with("javascript:") || href == "#" {
+                return None;
+            }
+            Some((anchor_text(a), href.to_string()))
+        })
+        .collect())
+}
+
+pub fn find_anchor(document: &Html, base: &Url, needle: &str) -> Result<Option<Url>> {
+    let needle = needle.to_lowercase();
+    for (text, href) in anchors(document)? {
+        if text.to_lowercase().contains(&needle) {
+            if let Ok(url) = base.join(&href) {
+                return Ok(Some(url));
+            }
+        }
+    }
+    Ok(None)
+}
+
+pub fn find_numbered_anchors(
+    document: &Html,
+    base: &Url,
+    keyword: &str,
+) -> Result<Vec<(u32, Url)>> {
+    let pattern = format!(r"(?i){}\D*?(\d+)", regex::escape(keyword));
+    let re = Regex::new(&pattern).map_err(|e| AppError::Ilias(format!("bad regex: {e}")))?;
+    let mut out = Vec::new();
+    for (text, href) in anchors(document)? {
+        if let Some(caps) = re.captures(&text) {
+            if let Ok(n) = caps[1].parse::<u32>() {
+                if let Ok(u) = base.join(&href) {
+                    out.push((n, u));
+                }
+            }
+        }
+    }
+    Ok(out)
 }

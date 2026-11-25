@@ -4,7 +4,7 @@ use reqwest::{Client, cookie::Jar, redirect::Policy};
 use scraper::Html;
 use url::Url;
 
-use crate::{error::Result, http::form::FormData};
+use crate::{error::Result, form::FormData};
 
 pub struct HttpClient {
     client: Client,
@@ -55,5 +55,17 @@ impl HttpClient {
         let body = response.text().await?;
 
         Ok((final_url, Html::parse_document(&body)))
+    }
+
+    pub async fn get_bytes(&self, url: &Url) -> Result<(reqwest::header::HeaderMap, Vec<u8>)> {
+        let response = self
+            .client
+            .get(url.clone())
+            .send()
+            .await?
+            .error_for_status()?;
+        let headers = response.headers().clone();
+        let body = response.bytes().await?.to_vec();
+        Ok((headers, body))
     }
 }

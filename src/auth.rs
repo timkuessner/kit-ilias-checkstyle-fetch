@@ -1,13 +1,12 @@
 use url::Url;
 
 use crate::{
-    config::Config,
+    client::HttpClient,
+    config::{Config, ILIAS_URL},
     error::{AppError, Result},
+    form::FormData,
     html,
-    http::{FormData, HttpClient},
 };
-
-const ILIAS_URL: &str = "https://ilias.studium.kit.edu";
 
 pub async fn authenticate(config: &Config) -> Result<HttpClient> {
     let client = HttpClient::new()?;

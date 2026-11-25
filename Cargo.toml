@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 dotenvy = "0.15.7"
+regex = "1.13.2"
 reqwest = { version = "0.13.5", features = ["cookies"] }
 scraper = "0.29.0"
 thiserror = "2.0.21"

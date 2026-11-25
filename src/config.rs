@@ -1,5 +1,7 @@
 use crate::error::{AppError, Result};
 
+pub const ILIAS_URL: &str = "https://ilias.studium.kit.edu";
+
 pub struct Config {
     username: String,
     password: String,

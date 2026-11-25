@@ -1,8 +1,10 @@
 mod auth;
+mod client;
 mod config;
+mod crawl;
 mod error;
+mod form;
 mod html;
-mod http;
 
 use crate::{config::Config, error::Result};
 
@@ -16,10 +18,8 @@ async fn main() {
 
 async fn run() -> Result<()> {
     let config = Config::from_env()?;
-
-    let _ = auth::authenticate(&config).await?;
-
+    let client = auth::authenticate(&config).await?;
     println!("Authentication successful");
-
+    crawl::run(&client).await?;
     Ok(())
 }
