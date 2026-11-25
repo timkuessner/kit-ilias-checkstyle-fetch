@@ -21,4 +21,14 @@ impl HttpClient {
 
         Ok(Self { client })
     }
+
+    pub async fn get(&self, url: &str) -> Result<String> {
+        let response = self.client.get(url).send().await?;
+
+        let response = response.error_for_status()?;
+
+        let body = response.text().await?;
+
+        Ok(body)
+    }
 }

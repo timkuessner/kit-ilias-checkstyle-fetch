@@ -7,3 +7,4 @@ edition = "2024"
 dotenvy = "0.15.7"
 reqwest = { version = "0.13.5", features = ["cookies"] }
 thiserror = "2.0.21"
+tokio = { version = "1.54.1", features = ["full"] }

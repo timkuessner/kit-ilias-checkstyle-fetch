@@ -5,15 +5,20 @@ mod http;
 use crate::error::Result;
 use crate::http::HttpClient;
 
-fn main() {
-    if let Err(error) = run() {
+#[tokio::main]
+async fn main() {
+    if let Err(error) = run().await {
         eprintln!("Error: {error}");
         std::process::exit(1);
     }
 }
 
-fn run() -> Result<()> {
+async fn run() -> Result<()> {
     let http_client = HttpClient::new()?;
+
+    let body = http_client.get("https://ilias.studium.kit.edu").await?;
+
+    println!("{}", body);
 
     Ok(())
 }
