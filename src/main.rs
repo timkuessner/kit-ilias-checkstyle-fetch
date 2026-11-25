@@ -1,5 +1,9 @@
 mod config;
 mod error;
+mod http;
+
+use crate::error::Result;
+use crate::http::HttpClient;
 
 fn main() {
     if let Err(error) = run() {
@@ -8,15 +12,8 @@ fn main() {
     }
 }
 
-fn run() -> error::Result<()> {
-    let config = config::Config::from_env()?;
-
-    println!("Configuration loaded!");
-    println!("Username: {}", config.username);
-
-    if !config.password.is_empty() {
-        println!("Password is set");
-    }
+fn run() -> Result<()> {
+    let http_client = HttpClient::new()?;
 
     Ok(())
 }

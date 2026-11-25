@@ -1,8 +1,8 @@
 use crate::error::{AppError, Result};
 
 pub struct Config {
-    pub username: String,
-    pub password: String,
+    username: String,
+    password: String,
 }
 
 impl Config {
@@ -28,5 +28,13 @@ impl Config {
         }
 
         Ok(Self { username, password })
+    }
+
+    pub fn username(&self) -> &str {
+        &self.username
+    }
+
+    pub fn password(&self) -> &str {
+        &self.password
     }
 }
