@@ -1,6 +1,7 @@
 use std::{sync::Arc, time::Duration};
 
 use reqwest::{Client, cookie::Jar, redirect::Policy};
+use scraper::Html;
 use url::Url;
 
 use crate::error::Result;
@@ -31,5 +32,19 @@ impl HttpClient {
         let body = response.text().await?;
 
         Ok(body)
+    }
+
+    pub async fn get_html(&self, url: &Url) -> Result<(Url, Html)> {
+        let response = self
+            .client
+            .get(url.clone())
+            .send()
+            .await?
+            .error_for_status()?;
+
+        let final_url = response.url().clone();
+        let body = response.text().await?;
+
+        Ok((final_url, Html::parse_document(&body)))
     }
 }

@@ -16,13 +16,13 @@ async fn main() {
 }
 
 async fn run() -> Result<()> {
-    let http_client = HttpClient::new()?;
+    let client = HttpClient::new()?;
 
     let url = Url::parse("https://ilias.studium.kit.edu")?;
 
-    let body = http_client.get(&url).await?;
+    let (final_url, _) = client.get_html(&url).await?;
 
-    println!("{}", body);
+    println!("Final URL: {final_url}");
 
     Ok(())
 }
