@@ -7,6 +7,9 @@ pub enum AppError {
 
     #[error("HTTP request failed: {0}")]
     Http(#[from] reqwest::Error),
+
+    #[error("URL error: {0}")]
+    Url(#[from] url::ParseError),
 }
 
 pub type Result<T> = std::result::Result<T, AppError>;

@@ -2,6 +2,8 @@ mod config;
 mod error;
 mod http;
 
+use url::Url;
+
 use crate::error::Result;
 use crate::http::HttpClient;
 
@@ -16,7 +18,9 @@ async fn main() {
 async fn run() -> Result<()> {
     let http_client = HttpClient::new()?;
 
-    let body = http_client.get("https://ilias.studium.kit.edu").await?;
+    let url = Url::parse("https://ilias.studium.kit.edu")?;
+
+    let body = http_client.get(&url).await?;
 
     println!("{}", body);
 

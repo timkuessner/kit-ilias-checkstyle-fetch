@@ -1,6 +1,7 @@
 use std::{sync::Arc, time::Duration};
 
 use reqwest::{Client, cookie::Jar, redirect::Policy};
+use url::Url;
 
 use crate::error::Result;
 
@@ -22,8 +23,8 @@ impl HttpClient {
         Ok(Self { client })
     }
 
-    pub async fn get(&self, url: &str) -> Result<String> {
-        let response = self.client.get(url).send().await?;
+    pub async fn get(&self, url: &Url) -> Result<String> {
+        let response = self.client.get(url.clone()).send().await?;
 
         let response = response.error_for_status()?;
 
